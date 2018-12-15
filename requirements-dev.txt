@@ -1,3 +1,5 @@
+python-dateutil
+wheel
 pytest
 coverage
 pytest-cov
