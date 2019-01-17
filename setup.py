@@ -21,7 +21,7 @@ setup(
     url=__url__,
     download_url=__download_url__,
     keywords=['utility'],
-    packages=[__title__],
+    packages=[__title__, f"{__title__}.uidb32"],
     package_data={__title__: [readme_file_path]},
     install_requires=['python-dateutil'],
     classifiers=[]
