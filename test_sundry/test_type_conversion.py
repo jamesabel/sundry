@@ -3,8 +3,8 @@ from sundry import to_bool
 
 
 def test_type_conversion():
-    test_values = {False: ['F', 'false', 'False', 'FALSE', 'no', 0],
-                   True: ['T', 'true', 'yes', 1],
+    test_values = {False: [False, 'F', 'false', 'False', 'FALSE', 'no', 0],
+                   True: [True, 'T', 'true', 'yes', 1],
                    None: [None, 'None', 'NULL', 'null']}
     for value, variants in test_values.items():
         for variant in variants:

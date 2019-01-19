@@ -10,7 +10,9 @@ def to_bool(value):
     :return: boolean value of original string
     """
 
-    if value is None:
+    if type(value) == bool:
+        new_bool = value
+    elif value is None:
         new_bool = None
     elif type(value) == int and 0 <= value <= 1:
         new_bool = bool(value)
