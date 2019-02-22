@@ -126,7 +126,7 @@ class TestProcess(multiprocessing.Process):
 def test_fb_locking(long_test=False):
 
     if long_test:
-        overall_time = 30*60  # approximate run time in seconds
+        overall_time = 4*60*60  # approximate run time in seconds
         n_processes = 13
         iterations = int(round(float(overall_time)/float(n_processes))/2.0)  # div by 2 to get approximately the overall runtime
         print(f"{iterations} iterations")
