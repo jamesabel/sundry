@@ -3,3 +3,5 @@ wheel
 pytest
 coverage
 pytest-cov
+balsa
+pressenter2exit
