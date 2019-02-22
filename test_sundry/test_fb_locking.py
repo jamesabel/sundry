@@ -131,7 +131,7 @@ def test_fb_locking(long_test=False):
         iterations = int(round(float(overall_time)/float(n_processes))/2.0)  # div by 2 to get approximately the overall runtime
         print(f"{iterations} iterations")
     else:
-        # short test
+        # short test (e.g. pytest)
         n_processes = 3
         iterations = 5
 
@@ -152,12 +152,16 @@ def test_fb_locking(long_test=False):
         p.start()
 
     time.sleep(2)  # processes will not run without this (!)
-    press_enter_to_exit = PressEnter2Exit(pre_message=f'press enter to force exit of {application_name}',
-                                          post_message=f'"{application_name}" has been forced to exit ...')
+
+    if long_test:
+        press_enter_to_exit = PressEnter2Exit(pre_message=f'press enter to force exit of {application_name}',
+                                              post_message=f'"{application_name}" has been forced to exit ...')
+    else:
+        press_enter_to_exit = None  # don't use stdout when running pytest
     print()
-    while press_enter_to_exit.is_alive() and all([p.is_alive() for p in processes]):
+    while (press_enter_to_exit is None or press_enter_to_exit.is_alive()) and all([p.is_alive() for p in processes]):
         time.sleep(1)
-    if not press_enter_to_exit.is_alive():
+    if press_enter_to_exit is not None and not press_enter_to_exit.is_alive():
         for p in processes:
             p.kill()
     for p in processes:
