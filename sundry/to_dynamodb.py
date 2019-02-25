@@ -30,8 +30,8 @@ def dict_to_dynamodb(orig_dict):
 
             elif type(value) is list:
                 resp[key] = []
-                for i in value:
-                    resp[key].append(dict_to_dynamodb(i))
+                for v in value:
+                    resp[key].append(dict_to_dynamodb(v))
 
             elif value is None:
                 pass
@@ -39,9 +39,7 @@ def dict_to_dynamodb(orig_dict):
             else:
                 resp[key] = value
 
-        return resp
-
-    elif type(orig_dict) is not dict or list:
+    elif type(orig_dict) is not list:
         resp = None
         if type(orig_dict) is str:
             resp = orig_dict
@@ -58,4 +56,7 @@ def dict_to_dynamodb(orig_dict):
         else:
             resp = orig_dict
 
-        return resp
+    else:
+        raise NotImplementedError
+
+    return resp
