@@ -3,6 +3,8 @@ import decimal
 from collections import OrderedDict, defaultdict
 from pprint import pprint
 
+import decimal
+
 from sundry import dict_to_dynamodb
 
 
@@ -33,7 +35,9 @@ def test_dict_to_dynamodb():
             10
         ],
         'od': od,
-        'dd': dd
+        'dd': dd,
+        'DecimalInt': decimal.Decimal(42),
+        'DecimalFloat': decimal.Decimal(2.0)/decimal.Decimal(3.0)
     }
 
     dynamodb_dict = dict_to_dynamodb(sample_input)
@@ -45,6 +49,8 @@ def test_dict_to_dynamodb():
     assert(dynamodb_dict['sample6'] == {'test': True})
     assert(dynamodb_dict['sample7'] == ["Hello", "World"])
     assert(dynamodb_dict['sample8'] == [decimal.Decimal(9), decimal.Decimal(10)])
+    assert(dynamodb_dict['DecimalInt'] == decimal.Decimal(42))
+    assert(dynamodb_dict['DecimalFloat'] == decimal.Decimal(2.0)/decimal.Decimal(3.0))
 
 
 if __name__ == "__main__":

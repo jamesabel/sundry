@@ -17,7 +17,7 @@ def dict_to_dynamodb(input_value):
         resp = {k: dict_to_dynamodb(v) for k, v in input_value.items()}
     elif type(input_value) is list:
         resp = [dict_to_dynamodb(v) for v in input_value]
-    elif type(input_value) is str or type(input_value) is bool or input_value is None:
+    elif type(input_value) is str or type(input_value) is bool or input_value is None or type(input_value) is decimal.Decimal:
         resp = input_value
     elif type(input_value) is float or type(input_value) is int:
         resp = decimal.Decimal(str(input_value))
