@@ -3,8 +3,6 @@ import decimal
 from collections import OrderedDict, defaultdict
 from pprint import pprint
 
-import decimal
-
 from sundry import dict_to_dynamodb
 
 
