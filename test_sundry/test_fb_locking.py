@@ -65,7 +65,7 @@ def write_work_file(file_value, test_uuid, process_name, stats):
         int(f.write(f"{file_value},{test_uuid},{process_name}"))
 
 
-class TestProcess(multiprocessing.Process):
+class TstProcess(multiprocessing.Process):
 
     class MyFileBasedLocking(FileBasedLocking):
 
@@ -147,7 +147,7 @@ def test_fb_locking(long_test=False):
         pass
     write_work_file(0, 'INIT', 'INIT', 'INIT')
     for process_number in range(0, n_processes):
-        processes.append(TestProcess(iterations, False))
+        processes.append(TstProcess(iterations, False))
     for p in processes:
         p.start()
 
