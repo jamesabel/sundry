@@ -14,7 +14,11 @@ def dict_to_dynamodb(input_value):
     :return: converted version of the original dictionary
     """
     if type(input_value) is dict or type(input_value) is OrderedDict or type(input_value) is defaultdict:
-        resp = {k: dict_to_dynamodb(v) for k, v in input_value.items()}
+        resp = {}
+        for k, v in input_value.items():
+            if type(k) is int:
+                k = str(k)  # allow int values as keys since they are unambiguous (bool, float, etc. are not)
+            resp[k] = dict_to_dynamodb(v)
     elif type(input_value) is list:
         resp = [dict_to_dynamodb(v) for v in input_value]
     elif type(input_value) is str or type(input_value) is bool or input_value is None or type(input_value) is decimal.Decimal:

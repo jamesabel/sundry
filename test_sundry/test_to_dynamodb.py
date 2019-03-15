@@ -36,9 +36,11 @@ def test_dict_to_dynamodb():
         'dd': dd,
         'DecimalInt': decimal.Decimal(42),
         'DecimalFloat': decimal.Decimal(2.0)/decimal.Decimal(3.0),
-        'a_tuple': (1, 2, 3)
+        'a_tuple': (1, 2, 3),
+        42: 'my_key_is_an_int',
     }
 
+    pprint(sample_input)
     dynamodb_dict = dict_to_dynamodb(sample_input)
     pprint(dynamodb_dict)
     assert(dynamodb_dict['sample1'] == 'Test Data')
@@ -51,6 +53,7 @@ def test_dict_to_dynamodb():
     assert(dynamodb_dict['DecimalInt'] == decimal.Decimal(42))
     assert(dynamodb_dict['DecimalFloat'] == decimal.Decimal(2.0)/decimal.Decimal(3.0))
     assert(dynamodb_dict['a_tuple'] == [1, 2, 3])
+    assert(dynamodb_dict['42'] == 'my_key_is_an_int')  # test conversion of an int key to a string
 
 
 if __name__ == "__main__":
