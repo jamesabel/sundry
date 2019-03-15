@@ -24,7 +24,9 @@ def dict_to_dynamodb(input_value):
     elif type(input_value) is str or type(input_value) is bool or input_value is None or type(input_value) is decimal.Decimal:
         resp = input_value  # native DynamoDB types
     elif type(input_value) is float or type(input_value) is int:
-        resp = decimal.Decimal(input_value)  # boto3 uses Decimal for numbers
+        # boto3 uses Decimal for numbers, but handle the 'inexact error'
+        # 'casting' to str may work as well, but this should be better at maintaining precision
+        resp = decimal_context.create_decimal(input_value)
     elif type(input_value) is tuple:
         resp = list(input_value)  # convert tuple to a list
     else:
