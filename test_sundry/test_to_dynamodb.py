@@ -35,7 +35,8 @@ def test_dict_to_dynamodb():
         'od': od,
         'dd': dd,
         'DecimalInt': decimal.Decimal(42),
-        'DecimalFloat': decimal.Decimal(2.0)/decimal.Decimal(3.0)
+        'DecimalFloat': decimal.Decimal(2.0)/decimal.Decimal(3.0),
+        'a_tuple': (1, 2, 3)
     }
 
     dynamodb_dict = dict_to_dynamodb(sample_input)
@@ -49,6 +50,7 @@ def test_dict_to_dynamodb():
     assert(dynamodb_dict['sample8'] == [decimal.Decimal(9), decimal.Decimal(10)])
     assert(dynamodb_dict['DecimalInt'] == decimal.Decimal(42))
     assert(dynamodb_dict['DecimalFloat'] == decimal.Decimal(2.0)/decimal.Decimal(3.0))
+    assert(dynamodb_dict['a_tuple'] == [1, 2, 3])
 
 
 if __name__ == "__main__":
