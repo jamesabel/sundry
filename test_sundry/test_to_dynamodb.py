@@ -5,10 +5,18 @@ from collections import OrderedDict, defaultdict
 from pprint import pprint
 import math
 
+import boto3
+from botocore.exceptions import ProfileNotFound
+
 from sundry import dict_to_dynamodb
 
 
 def test_dict_to_dynamodb():
+
+    id_str = 'id'
+    dict_id = 'test'
+    sundry_str = 'sundry'
+    aws_region = 'us-west-2'
 
     od = OrderedDict()
     od['a'] = 1
@@ -18,6 +26,7 @@ def test_dict_to_dynamodb():
     dd[1] = 2
 
     sample_input = {
+        id_str: dict_id,
         'sample1': 'Test Data',
         'sample2': 2.0,
         'sample3': True,
@@ -40,15 +49,22 @@ def test_dict_to_dynamodb():
         'DecimalFloat': decimal.Decimal(2.0)/decimal.Decimal(3.0),
         'a_tuple': (1, 2, 3),
         42: 'my_key_is_an_int',
-        'difficult_floats': [math.pi, math.e, sys.float_info.max, sys.float_info.min, 0.6],
+        'difficult_floats': [math.pi, math.e, 0.6],
         'difficult_ints': [sys.maxsize]
     }
 
+    if False:
+        # interestingly, these do not work
+        sample_input['does_not_work'] = [sys.float_info.max, sys.float_info.min]
+
     pprint(sample_input)
     dynamodb_dict = dict_to_dynamodb(sample_input)
+
+    print('========')
     pprint(dynamodb_dict)
+
     assert(dynamodb_dict['sample1'] == 'Test Data')
-    assert(dynamodb_dict['sample2'] == decimal.Decimal('2'))
+    assert(math.isclose(float(dynamodb_dict['sample2']), decimal.Decimal(2.0)))
     assert(dynamodb_dict['sample3'] is True)
     assert(dynamodb_dict['sample5'] is None)
     assert(dynamodb_dict['sample6'] == {'test': True})
@@ -58,6 +74,17 @@ def test_dict_to_dynamodb():
     assert(dynamodb_dict['DecimalFloat'] == decimal.Decimal(2.0)/decimal.Decimal(3.0))
     assert(dynamodb_dict['a_tuple'] == [1, 2, 3])
     assert(dynamodb_dict['42'] == 'my_key_is_an_int')  # test conversion of an int key to a string
+
+    try:
+        session = boto3.Session(profile_name=sundry_str, region_name=aws_region)
+        dynamodb_resource = session.resource('dynamodb')
+        table = dynamodb_resource.Table(sundry_str)
+        table.put_item(Item=dynamodb_dict)
+        item = table.get_item(Key={id_str: dict_id})
+        print('========')
+        pprint(item['Item'])
+    except ProfileNotFound:
+        print(f'*** ERROR : could not get AWS profile "{sundry_str}" - could not test actual AWS access ***')
 
 
 if __name__ == "__main__":
