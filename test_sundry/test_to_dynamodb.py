@@ -1,7 +1,9 @@
 
+import sys
 import decimal
 from collections import OrderedDict, defaultdict
 from pprint import pprint
+import math
 
 from sundry import dict_to_dynamodb
 
@@ -38,6 +40,8 @@ def test_dict_to_dynamodb():
         'DecimalFloat': decimal.Decimal(2.0)/decimal.Decimal(3.0),
         'a_tuple': (1, 2, 3),
         42: 'my_key_is_an_int',
+        'difficult_floats': [math.pi, math.e, sys.float_info.max, sys.float_info.min, 0.6],
+        'difficult_ints': [sys.maxsize]
     }
 
     pprint(sample_input)
