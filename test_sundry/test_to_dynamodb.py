@@ -57,11 +57,7 @@ def test_dict_to_dynamodb():
         # interestingly, these do not work
         sample_input['does_not_work'] = [sys.float_info.max, sys.float_info.min]
 
-    pprint(sample_input)
     dynamodb_dict = dict_to_dynamodb(sample_input)
-
-    print('========')
-    pprint(dynamodb_dict)
 
     assert(dynamodb_dict['sample1'] == 'Test Data')
     assert(math.isclose(float(dynamodb_dict['sample2']), decimal.Decimal(2.0)))
@@ -81,10 +77,14 @@ def test_dict_to_dynamodb():
         table = dynamodb_resource.Table(sundry_str)
         table.put_item(Item=dynamodb_dict)
         item = table.get_item(Key={id_str: dict_id})
-        print('========')
-        pprint(item['Item'])
-    except ProfileNotFound:
+        sample_from_db = item['Item']
+        assert(sample_from_db == dynamodb_dict)  # make sure we get back exactly what we wrote
+    except ProfileNotFound as e:
         print(f'*** ERROR : could not get AWS profile "{sundry_str}" - could not test actual AWS access ***')
+        print(e)
+        # set to False pass even if we only test to check the conversion, although running the test doesn't actually check put/get from AWS
+        if True:
+            raise
 
 
 if __name__ == "__main__":
