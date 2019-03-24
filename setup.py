@@ -23,6 +23,6 @@ setup(
     keywords=['utility'],
     packages=[__title__, f"{__title__}.uidb32"],
     package_data={__title__: [readme_file_path]},
-    install_requires=['python-dateutil'],
+    install_requires=['python-dateutil', 'pillow'],
     classifiers=[]
 )

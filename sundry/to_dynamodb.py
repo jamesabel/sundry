@@ -1,6 +1,9 @@
 
+import io
 import decimal
 from collections import OrderedDict, defaultdict
+
+from PIL import Image
 
 # Handles Inexact error.
 decimal_context = decimal.getcontext().copy()
@@ -33,6 +36,11 @@ def dict_to_dynamodb(input_value):
             resp = decimal_context.create_decimal(input_value)
         else:
             resp = decimal.Decimal(input_value)
+    elif isinstance(input_value, Image.Image):
+        # save pillow (PIL) image as PNG binary
+        image_byte_array = io.BytesIO()
+        input_value.save(image_byte_array, format='PNG')
+        resp = image_byte_array.getvalue()
     else:
         raise NotImplementedError(type(input_value), input_value)
     return resp

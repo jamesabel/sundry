@@ -1,9 +1,12 @@
 
+import os
 import sys
 import decimal
 from collections import OrderedDict, defaultdict
 from pprint import pprint
 import math
+
+from PIL import Image
 
 import boto3
 from botocore.exceptions import ProfileNotFound
@@ -24,6 +27,11 @@ def test_dict_to_dynamodb():
 
     dd = defaultdict(int)
     dd[1] = 2
+
+    # source:
+    # https://en.wikipedia.org/wiki/Portable_Network_Graphics
+    # https://en.wikipedia.org/wiki/File:PNG_transparency_demonstration_1.png
+    png_image = Image.open(os.path.join("test_sundry", "280px-PNG_transparency_demonstration_1.png"))
 
     sample_input = {
         id_str: dict_id,
@@ -50,7 +58,8 @@ def test_dict_to_dynamodb():
         'a_tuple': (1, 2, 3),
         42: 'my_key_is_an_int',
         'difficult_floats': [math.pi, math.e, 0.6],
-        'difficult_ints': [sys.maxsize]
+        'difficult_ints': [sys.maxsize],
+        'image': png_image
     }
 
     if False:
