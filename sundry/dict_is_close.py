@@ -4,12 +4,12 @@ import math
 
 def dict_is_close(x, y, rel_tol=None, abs_tol=None):
     """
-    Like doing x = y, except if there are floats then use math.isclose()
-    :param x:
-    :param y:
-    :param rel_tol:
-    :param abs_tol:
-    :return: True if dictionaries match
+    Like doing x == y for a dict, except if there are floats then use math.isclose()
+    :param x: input x
+    :param y: input y
+    :param rel_tol: relative tolerance to pass to math.close
+    :param abs_tol: absolute tolerance to pass to math.close
+    :return: True if dictionaries match and float values are close
     """
     if type(x) is float and type(y) is float:
         if rel_tol is None and abs_tol is None:
