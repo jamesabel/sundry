@@ -19,7 +19,8 @@ def dict_is_close(x, y, rel_tol=None, abs_tol=None):
             # user supplied tolerance
             return math.isclose(x, y, rel_tol=rel_tol, abs_tol=abs_tol)
         else:
-            raise ValueError
+            # require both
+            raise ValueError(rel_tol, abs_tol)
     elif type(x) is dict and type(y) is dict:
         if x.keys() != y.keys():
             return False
