@@ -1,4 +1,4 @@
-
+from decimal import Decimal
 import distutils.util
 
 
@@ -15,6 +15,8 @@ def to_bool(value):
     elif value is None:
         new_bool = None
     elif type(value) == int and 0 <= value <= 1:
+        new_bool = bool(value)
+    elif type(value) == Decimal and (value == Decimal(0) or value == Decimal(1)):
         new_bool = bool(value)
     elif type(value) == str:
         if value.lower() == 'none' or value.lower() == 'null':
