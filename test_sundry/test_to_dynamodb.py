@@ -5,6 +5,7 @@ import decimal
 from collections import OrderedDict, defaultdict
 from pprint import pprint
 import math
+import datetime
 
 from PIL import Image
 
@@ -59,7 +60,8 @@ def test_dict_to_dynamodb():
         42: 'my_key_is_an_int',
         'difficult_floats': [math.pi, math.e, 0.6],
         'difficult_ints': [sys.maxsize],
-        'image': png_image
+        'image': png_image,
+        'test_date_time': datetime.datetime.fromtimestamp(1559679535)  # 2019-06-04T13:18:55
     }
 
     if False:
@@ -79,6 +81,7 @@ def test_dict_to_dynamodb():
     assert(dynamodb_dict['DecimalFloat'] == decimal.Decimal(2.0)/decimal.Decimal(3.0))
     assert(dynamodb_dict['a_tuple'] == [1, 2, 3])
     assert(dynamodb_dict['42'] == 'my_key_is_an_int')  # test conversion of an int key to a string
+    assert(dynamodb_dict['test_date_time'] == "2019-06-04T13:18:55")
 
     try:
         session = boto3.Session(profile_name=sundry_str, region_name=aws_region)

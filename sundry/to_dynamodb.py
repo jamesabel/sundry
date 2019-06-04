@@ -2,6 +2,7 @@
 import io
 import decimal
 from collections import OrderedDict, defaultdict
+import datetime
 
 from PIL import Image
 
@@ -41,6 +42,8 @@ def dict_to_dynamodb(input_value):
         image_byte_array = io.BytesIO()
         input_value.save(image_byte_array, format='PNG')
         resp = image_byte_array.getvalue()
+    elif isinstance(input_value, datetime.datetime):
+        resp = input_value.isoformat()
     else:
         raise NotImplementedError(type(input_value), input_value)
     return resp
