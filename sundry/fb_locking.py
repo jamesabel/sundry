@@ -14,9 +14,13 @@ separator_char = ','
 
 
 class FileBasedLocking:
+
     """
+
     Lock some thing, using a file in the local file system as the lock mechanism.
+
     """
+
     def __init__(self, application_name=None, author_name=None, timeout=10*60, instance_name=''):
         self.application_name = application_name
         self.author_name = author_name
@@ -32,7 +36,9 @@ class FileBasedLocking:
         self.init_logger()
 
     def init_logger(self):
+
         """
+
         Derived class should generally override this method.  While this provided method may work for some very simple applications,
         using the Balsa package (https://pypi.org/project/balsa/) is recommended.
 
@@ -46,18 +52,23 @@ class FileBasedLocking:
         logging.basicConfig(stream=sys.stdout, level=logging.WARNING)
 
     def get_lock_file_dir(self):
+
         """
+
         Return the directory the lock file will be in.  Override this method to change the directory used.
 
         For example, use appdirs' user_data_dir() for user scope or site_data_dir() for system scope:
-            from appdirs import site_data_dir
 
-            return os.path.join(site_data_dir(self.application_name, self.author_name))
-                or
-            return os.path.join(user_data_dir(self.application_name, self.author_name))
+        from appdirs import site_data_dir
+
+        return os.path.join(site_data_dir(self.application_name, self.author_name))
+        or
+        return os.path.join(user_data_dir(self.application_name, self.author_name))
 
         :return: lock file directory
+
         """
+
         return "."
 
     def get_lock_file_name(self, application_name):
@@ -70,6 +81,7 @@ class FileBasedLocking:
         """
         Gets the time as a string in a very specific format and number of characters.  A constant string length
         facilitates updating the lock file as each field occupies a specific file offset.
+
         :return: time since epoch as a constant-length string
         """
         return f"{time.time():30.6f}"
@@ -77,6 +89,7 @@ class FileBasedLocking:
     def _get_instance_name(self):
         """
         get instance name truncated and padded to a constant number of characters
+
         :return: instance name as an exact number of characters
         """
         return f"{self.instance_name:40.40}"
@@ -102,6 +115,7 @@ class FileBasedLocking:
     def acquire_lock(self):
         """
         Acquire the lock.  Returns the UUID of this lock if successful, otherwise None.
+
         :return: Lock UUID or None if failure.
         """
         lock_acquired_count = 0

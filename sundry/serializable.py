@@ -5,15 +5,18 @@ from decimal import Decimal
 
 
 def convert_serializable_special_cases(o):
+
     """
     Convert an object to a type that is fairly generally serializable (e.g. json serializable).
     This only handles the cases that need converting.  The json module handles all the rest.
     For JSON, with json.dump or json.dumps with argument default=convert_serializable.
     Example:
-        json.dumps(my_animal, indent=4, default=_convert_serializable)
+    json.dumps(my_animal, indent=4, default=_convert_serializable)
+
     :param o: object to be converted to a type that is serializable
     :return: a serializable representation
     """
+
     if isinstance(o, Enum):
         serializable_representation = o.value
     elif isinstance(o, Decimal):

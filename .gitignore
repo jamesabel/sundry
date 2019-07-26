@@ -170,3 +170,8 @@ fabric.properties
 temp/
 LICENSE.txt
 debug/
+# this is the "source" created by sphinx-autodoc
+source/
+_build/
+_static/
+_templates/

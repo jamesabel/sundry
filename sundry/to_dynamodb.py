@@ -15,8 +15,11 @@ handle_inexact_error = True
 def dict_to_dynamodb(input_value):
     """
     makes a dictionary follow boto3 item standards
+
     :param input_value: input dictionary
+
     :return: converted version of the original dictionary
+
     """
     if type(input_value) is dict or type(input_value) is OrderedDict or type(input_value) is defaultdict:
         resp = {}
