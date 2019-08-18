@@ -1,6 +1,8 @@
 
 from sundry import is_main
 
+from .test import *
+
 
 def test_is_main():
     assert (not is_main())
