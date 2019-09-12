@@ -28,10 +28,10 @@ def dict_to_dynamodb(input_value, convert_images: bool = True, raise_exception: 
         for k, v in input_value.items():
             if type(k) is int:
                 k = str(k)  # allow int as key since it is unambiguous (e.g. bool and float are ambiguous)
-            resp[k] = dict_to_dynamodb(v)
+            resp[k] = dict_to_dynamodb(v, convert_images, raise_exception)
     elif type(input_value) is list or type(input_value) is tuple:
         # converts tuple to list
-        resp = [dict_to_dynamodb(v) for v in input_value]
+        resp = [dict_to_dynamodb(v, convert_images, raise_exception) for v in input_value]
     elif type(input_value) is str or type(input_value) is bool or input_value is None or type(input_value) is decimal.Decimal:
         resp = input_value  # native DynamoDB types
     elif type(input_value) is float or type(input_value) is int:
