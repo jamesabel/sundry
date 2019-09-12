@@ -12,11 +12,13 @@ decimal_context.prec = 38  # Numbers can have 38 digits precision
 handle_inexact_error = True
 
 
-def dict_to_dynamodb(input_value):
+def dict_to_dynamodb(input_value, convert_images: bool = True, raise_exception: bool = True):
     """
     makes a dictionary follow boto3 item standards
 
     :param input_value: input dictionary
+    :param convert_images: set to False to skip over images (they can be too large)
+    :param raise_exception: set to False to not raise exceptions on issues
 
     :return: converted version of the original dictionary
 
@@ -41,12 +43,18 @@ def dict_to_dynamodb(input_value):
         else:
             resp = decimal.Decimal(input_value)
     elif isinstance(input_value, Image.Image):
-        # save pillow (PIL) image as PNG binary
-        image_byte_array = io.BytesIO()
-        input_value.save(image_byte_array, format='PNG')
-        resp = image_byte_array.getvalue()
+        if convert_images:
+            # save pillow (PIL) image as PNG binary
+            image_byte_array = io.BytesIO()
+            input_value.save(image_byte_array, format='PNG')
+            resp = image_byte_array.getvalue()
+        else:
+            resp = None
     elif isinstance(input_value, datetime.datetime):
         resp = input_value.isoformat()
     else:
-        raise NotImplementedError(type(input_value), input_value)
+        if raise_exception:
+            raise NotImplementedError(type(input_value), input_value)
+        else:
+            resp = None
     return resp
