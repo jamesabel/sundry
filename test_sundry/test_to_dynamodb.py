@@ -61,7 +61,8 @@ def test_dict_to_dynamodb():
         'difficult_floats': [math.pi, math.e, 0.6],
         'difficult_ints': [sys.maxsize],
         'image': png_image,
-        'test_date_time': datetime.datetime.fromtimestamp(1559679535)  # 2019-06-04T13:18:55
+        'test_date_time': datetime.datetime.fromtimestamp(1559679535),  # 2019-06-04T13:18:55
+        'zero_len_string': ''
     }
 
     if False:
@@ -82,6 +83,7 @@ def test_dict_to_dynamodb():
     assert(dynamodb_dict['a_tuple'] == [1, 2, 3])
     assert(dynamodb_dict['42'] == 'my_key_is_an_int')  # test conversion of an int key to a string
     assert(dynamodb_dict['test_date_time'] == "2019-06-04T13:18:55")
+    assert(dynamodb_dict['zero_len_string'] is None)
 
     try:
         session = boto3.Session(profile_name=sundry_str, region_name=aws_region)

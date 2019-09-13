@@ -32,7 +32,13 @@ def dict_to_dynamodb(input_value, convert_images: bool = True, raise_exception: 
     elif type(input_value) is list or type(input_value) is tuple:
         # converts tuple to list
         resp = [dict_to_dynamodb(v, convert_images, raise_exception) for v in input_value]
-    elif type(input_value) is str or type(input_value) is bool or input_value is None or type(input_value) is decimal.Decimal:
+    elif type(input_value) is str:
+        if len(input_value) > 0:
+            resp = input_value
+        else:
+            # DynamoDB does not allow zero length strings
+            resp = None
+    elif type(input_value) is bool or input_value is None or type(input_value) is decimal.Decimal:
         resp = input_value  # native DynamoDB types
     elif type(input_value) is float or type(input_value) is int:
         # boto3 uses Decimal for numbers
