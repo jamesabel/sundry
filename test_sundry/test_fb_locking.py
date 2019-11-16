@@ -23,7 +23,13 @@ def get_out_file_path():
 
 
 def append_out_file(s):
-    with open(get_out_file_path(), 'a') as f:
+    out_file_path = get_out_file_path()
+    if os.path.exists(out_file_path):
+        mode = 'a'
+    else:
+        mode = 'w'
+    os.makedirs(os.path.dirname(out_file_path), exist_ok=True)
+    with open(get_out_file_path(), mode) as f:
         f.write(s)
 
 
@@ -61,7 +67,9 @@ def write_work_file(file_value, test_uuid, process_name, stats):
     append_out_file(f"{s}\n")
     # print(s)
 
-    with open(get_inc_file_path(), 'w') as f:
+    inc_file_path = get_inc_file_path()
+    os.makedirs(os.path.dirname(inc_file_path), exist_ok=True)
+    with open(inc_file_path, 'w') as f:
         int(f.write(f"{file_value},{test_uuid},{process_name}"))
 
 
