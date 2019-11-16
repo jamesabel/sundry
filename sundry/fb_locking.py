@@ -12,6 +12,8 @@ lock_char = 'L'
 unlock_char = '_'
 separator_char = ','
 
+log = logging.getLogger()
+
 
 class FileBasedLocking:
 
@@ -22,6 +24,9 @@ class FileBasedLocking:
     """
 
     def __init__(self, application_name=None, author_name=None, timeout=10*60, instance_name=''):
+
+        log.warning("FileBasedLocking has been deprecated and will be removed")
+
         self.application_name = application_name
         self.author_name = author_name
         self.timeout = timeout  # seconds
