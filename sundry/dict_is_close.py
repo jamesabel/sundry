@@ -7,7 +7,7 @@ abs_tol_default = 0.0
 
 
 @typechecked(always=True)
-def _is_close(a: float, b: float, rel_tol: float, abs_tol: float):
+def _is_close(a: (float, int), b: (float, int), rel_tol: float, abs_tol: float, value_label: str, max_divergence_label: str, max_divergence_value: (float, None)):
 
     """
     similar to math.isclose() except is keeps track of which values have the greatest difference
@@ -28,29 +28,41 @@ def _is_close(a: float, b: float, rel_tol: float, abs_tol: float):
     elif isinf(rel_tol) or isinf(abs_tol):
         is_close_flag = True
     else:
-        is_close_flag = abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+        # is_close_flag is same as:
+        # abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+        divergence = abs(a - b) - max(rel_tol * max(abs(a), abs(b)), abs_tol)  # if > 0.0, values are *not* close
+        is_close_flag = divergence <= 0.0
+        if not is_close_flag and (max_divergence_value is None or divergence > max_divergence_value):
+            if len(max_divergence_label) > 0:
+                max_divergence_label += "."
+            max_divergence_label += value_label
+            max_divergence_value = divergence
 
-    return is_close_flag
+    return is_close_flag, max_divergence_label, max_divergence_value
 
 
 @typechecked(always=True)
-def _dict_is_close_max_value(x, y, rel_tol: (float, None) = rel_tol_default, abs_tol: (float, None) = abs_tol_default, max_difference_label=None, max_difference_value: float = None):
+def _dict_is_close_max_value(x, y, rel_tol: (float, None), abs_tol: (float, None), value_label: str, max_divergence_label: str, max_divergence_value: (float, None)):
 
     if rel_tol is None or isnan(rel_tol):
         rel_tol = rel_tol_default
     if abs_tol is None:
         abs_tol = abs_tol_default
 
-    if isinstance(x, float) and isinstance(y, float):
-        is_close_flag = _is_close(x, y, rel_tol, abs_tol)
+    if (isinstance(x, float) or isinstance(x, int)) and (isinstance(y, float) or isinstance(y, int)):
+        is_close_flag, max_divergence_label, max_divergence_value = _is_close(x, y, rel_tol, abs_tol, value_label, max_divergence_label, max_divergence_value)
     elif isinstance(x, dict) and isinstance(y, dict):
-        is_close_flag = False
+        is_close_flags = []
         if set(x.keys()) == set(y.keys()):
-            is_close_flag = all([DictIsClose(x[k], y[k], rel_tol, abs_tol).is_close() for k in x])
+            for k in x:
+                # keys can be things other than strings, e.g. int
+                is_close_flag, max_divergence_label, max_divergence_value = _dict_is_close_max_value(x[k], y[k], rel_tol, abs_tol, str(k), max_divergence_label, max_divergence_value)
+                is_close_flags.append(is_close_flag)
+        is_close_flag = all(is_close_flags)
     else:
-        is_close_flag = x == y
+        is_close_flag = x == y  # everything else that can be evaluated with == such as strings
 
-    return is_close_flag, max_difference_label, max_difference_value
+    return is_close_flag, max_divergence_label, max_divergence_value
 
 
 class DictIsClose:
@@ -64,12 +76,16 @@ class DictIsClose:
         self._y = y
         self._rel_tol = rel_tol
         self._abs_tol = abs_tol
-        self._max_difference_label = None
-        self._max_difference_value = None
+        self._is_close_flag, self._max_divergence_label, self._max_divergence_value = _dict_is_close_max_value(self._x, self._y, self._rel_tol, self._abs_tol, "", "", None)
 
     def is_close(self):
-        is_close_flag, self._max_difference_label, self._max_difference_value = _dict_is_close_max_value(self._x, self._y, self._rel_tol, self._abs_tol)
-        return is_close_flag
+        return self._is_close_flag
+
+    def get_max_divergence_value(self):
+        return self._max_divergence_value
+
+    def get_max_divergence_label(self):
+        return self._max_divergence_label
 
 
 @typechecked(always=True)

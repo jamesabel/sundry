@@ -7,4 +7,4 @@ from .serializable import make_serializable, convert_serializable_special_cases
 from .to_dynamodb import dict_to_dynamodb
 from .hash import get_string_md5, get_string_sha256, get_string_sha512, get_file_md5, get_file_sha256, get_file_sha512
 from .fb_locking import FileBasedLocking, fb_locking_name
-from .dict_is_close import dict_is_close
+from .dict_is_close import dict_is_close, DictIsClose
