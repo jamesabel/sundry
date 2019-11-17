@@ -1,4 +1,3 @@
-
 import sys
 import uuid
 import base64
@@ -27,7 +26,7 @@ def uuid_to_b32(uuid_obj):
     :param uuid_obj: UUID object
     :return: b32 string
     """
-    return base64.b32encode(uuid_obj.bytes).decode().replace('=', '').lower()
+    return base64.b32encode(uuid_obj.bytes).decode().replace("=", "").lower()
 
 
 def b32_to_uuid(uuid_str_b32):
@@ -38,7 +37,7 @@ def b32_to_uuid(uuid_str_b32):
     """
     # pad (b32decode requires this)
     while len(uuid_str_b32) % 8 != 0:
-        uuid_str_b32 += '='
+        uuid_str_b32 += "="
     return uuid.UUID(base64.b32decode(uuid_str_b32, casefold=True).hex())
 
 

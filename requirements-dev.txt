@@ -9,3 +9,5 @@ pressenter2exit
 boto3
 twine
 sphinx
+black
+hypothesis

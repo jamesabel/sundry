@@ -1,4 +1,3 @@
-
 import os
 import sys
 import logging
@@ -6,11 +5,11 @@ from uuid import uuid4
 from os import makedirs
 import time
 
-fb_locking_name = 'fb_locking'
+fb_locking_name = "fb_locking"
 
-lock_char = 'L'
-unlock_char = '_'
-separator_char = ','
+lock_char = "L"
+unlock_char = "_"
+separator_char = ","
 
 log = logging.getLogger()
 
@@ -23,7 +22,7 @@ class FileBasedLocking:
 
     """
 
-    def __init__(self, application_name=None, author_name=None, timeout=10*60, instance_name=''):
+    def __init__(self, application_name=None, author_name=None, timeout=10 * 60, instance_name=""):
 
         log.warning("FileBasedLocking has been deprecated and will be removed")
 
@@ -77,7 +76,7 @@ class FileBasedLocking:
         return "."
 
     def get_lock_file_name(self, application_name):
-        return f'{application_name}_fbl.txt'  # file based lock
+        return f"{application_name}_fbl.txt"  # file based lock
 
     def get_lock_file_path(self):
         return os.path.join(self.get_lock_file_dir(), self.get_lock_file_name(self.application_name))
@@ -103,7 +102,7 @@ class FileBasedLocking:
         string_verified = False
         s = separator_char.join([lock_char, lock_uuid, self._get_time(), self._get_instance_name()])
         while not string_verified:
-            with open(file_path, 'w') as f:
+            with open(file_path, "w") as f:
                 f.write(s)
                 self.log.debug(f"writing {f.name} : {s}")
             try:
@@ -132,7 +131,7 @@ class FileBasedLocking:
             time.sleep(self.poll_sleep_time)
             write_lock = False
             try:
-                with open(lock_file_path, 'r+') as f:
+                with open(lock_file_path, "r+") as f:
                     contents = f.read()
                     if contents is not None and len(contents) >= 1:
                         contents_list = contents.split(separator_char)
@@ -143,7 +142,9 @@ class FileBasedLocking:
                             self.log.info(f"{self.instance_name}:attempting to lock unlocked file {lock_file_path} file_uuid={file_uuid} --> {lock_uuid}")
                         elif file_age > self.timeout:
                             write_lock = True
-                            self.log.warning(f'{self.instance_name}:locking timed out file="{lock_file_path}",file_age={file_age},timeout={self.timeout},lock_uuid={lock_uuid},contents="{contents}"')
+                            self.log.warning(
+                                f'{self.instance_name}:locking timed out file="{lock_file_path}",file_age={file_age},timeout={self.timeout},lock_uuid={lock_uuid},contents="{contents}"'
+                            )
                         else:
                             self.log.debug(f"{self.instance_name}:waiting for {lock_file_path}, locked by {file_uuid} , lock age={file_age}")
                     else:
@@ -180,13 +181,13 @@ class FileBasedLocking:
         return lock_uuid if self._is_lock_acquired(lock_acquired_count) else None
 
     def relinquish_lock(self, lock_uuid):
-        assert(lock_uuid is not None)
+        assert lock_uuid is not None
         lock_relinquished = False
         lock_file_path = self.get_lock_file_path()
         timeout_countdown = self._get_timeout_count()
         while not lock_relinquished and timeout_countdown > 0:
             try:
-                with open(lock_file_path, 'r+') as f:
+                with open(lock_file_path, "r+") as f:
                     contents = f.read()
                     if contents is not None and len(contents) > 0:
                         file_lock_uuid = contents.split(separator_char)[1]

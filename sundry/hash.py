@@ -35,7 +35,7 @@ def get_file_sha512(file_path):
 def _get_file_hash(file_path, hash_function):
     hash_object = hash_function()
 
-    bucket_size = 4096 # for speed
+    bucket_size = 4096  # for speed
     f = open(file_path, "rb")
     val = f.read(bucket_size)
     while len(val) > 0:

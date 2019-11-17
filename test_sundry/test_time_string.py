@@ -9,7 +9,7 @@ def test_time_string():
     uts = utc_time_string(t)
     for ts in [lts, uts]:
         # basic check for a few fields
-        assert(ts[0:1] == '2')
-        assert(ts.find('-') == 4)
-        assert(ts.find(':') == 13)
+        assert ts[0:1] == "2"
+        assert ts.find("-") == 4
+        assert ts.find(":") == 13
         print(ts)

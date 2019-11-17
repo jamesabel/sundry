@@ -1,4 +1,3 @@
-
 import sys
 import time
 import logging
@@ -10,31 +9,31 @@ import multiprocessing.managers
 from balsa import Balsa, get_logger
 from pressenter2exit import PressEnter2Exit
 
-application_name = 'test_fb_locking'
-author_name = 'abel'
+application_name = "test_fb_locking"
+author_name = "abel"
 
 log = get_logger(application_name)
 
-temp_dir = 'temp'
+temp_dir = "temp"
 
 
 def get_out_file_path():
-    return os.path.join('temp', 'fb_locking_test_out.txt')
+    return os.path.join("temp", "fb_locking_test_out.txt")
 
 
 def append_out_file(s):
     out_file_path = get_out_file_path()
     if os.path.exists(out_file_path):
-        mode = 'a'
+        mode = "a"
     else:
-        mode = 'w'
+        mode = "w"
     os.makedirs(os.path.dirname(out_file_path), exist_ok=True)
     with open(get_out_file_path(), mode) as f:
         f.write(s)
 
 
 def get_inc_file_path():
-    return os.path.join(temp_dir, 'inc_file.txt')
+    return os.path.join(temp_dir, "inc_file.txt")
 
 
 def read_work_file(caller_uuid, caller_process_name, caller_count):
@@ -42,7 +41,7 @@ def read_work_file(caller_uuid, caller_process_name, caller_count):
     with open(get_inc_file_path()) as f:
         s = f.read()
         if s is not None and len(s) > 0:
-            file_value_string, file_uuid, file_process_name = s.split(',')
+            file_value_string, file_uuid, file_process_name = s.split(",")
             try:
                 file_value = int(file_value_string)
             except ValueError as e:
@@ -69,19 +68,17 @@ def write_work_file(file_value, test_uuid, process_name, stats):
 
     inc_file_path = get_inc_file_path()
     os.makedirs(os.path.dirname(inc_file_path), exist_ok=True)
-    with open(inc_file_path, 'w') as f:
+    with open(inc_file_path, "w") as f:
         int(f.write(f"{file_value},{test_uuid},{process_name}"))
 
 
 class TstProcess(multiprocessing.Process):
-
     class MyFileBasedLocking(FileBasedLocking):
-
         def get_lock_file_dir(self):
             return temp_dir
 
         def init_logger(self):
-            balsa_log = Balsa(self.instance_name, author_name, log_directory=os.path.join('temp', 'log'), delete_existing_log_files=True)
+            balsa_log = Balsa(self.instance_name, author_name, log_directory=os.path.join("temp", "log"), delete_existing_log_files=True)
             balsa_log.init_logger()
             self.log = get_logger(application_name)
 
@@ -99,10 +96,10 @@ class TstProcess(multiprocessing.Process):
             print(s)
 
     def _stats_to_dict(self, total_time, test_count, min_time, max_time):
-        return {'avg': total_time/float(test_count), 'min': min_time, 'max': max_time}
+        return {"avg": total_time / float(test_count), "min": min_time, "max": max_time}
 
     def run(self):
-        fbl = self.MyFileBasedLocking('test', instance_name=self.name)
+        fbl = self.MyFileBasedLocking("test", instance_name=self.name)
         fbl.log_name = self.name
         test_count = 0
         total_time = 0.0
@@ -119,7 +116,7 @@ class TstProcess(multiprocessing.Process):
             min_time = duration if min_time is None else min(min_time, duration)
             max_time = duration if max_time is None else max(max_time, duration)
 
-            assert (lock_uuid is not None)
+            assert lock_uuid is not None
             self.print(f"{self.name} working ({lock_uuid})")
             file_test_count, file_uuid = read_work_file(lock_uuid, self.name, test_count)
             time.sleep(random.uniform(0.0, 1.0))  # work while this process owns the lock
@@ -131,12 +128,13 @@ class TstProcess(multiprocessing.Process):
         self.print_stats(test_count, self._stats_to_dict(total_time, test_count, min_time, max_time))
 
 
-def test_fb_locking(long_test=False):
+# name is tst_* (not test_*) so we will not run this test since file based locking module is deprecated)
+def tst_fb_locking(long_test=False):
 
     if long_test:
-        overall_time = 4*60*60  # approximate run time in seconds
+        overall_time = 4 * 60 * 60  # approximate run time in seconds
         n_processes = 13
-        iterations = int(round(float(overall_time)/float(n_processes))/2.0)  # div by 2 to get approximately the overall runtime
+        iterations = int(round(float(overall_time) / float(n_processes)) / 2.0)  # div by 2 to get approximately the overall runtime
         print(f"{iterations} iterations")
     else:
         # short test (e.g. pytest)
@@ -150,10 +148,10 @@ def test_fb_locking(long_test=False):
         pass
 
     try:
-        os.remove(os.path.join(temp_dir, 'test_fbl.txt'))
+        os.remove(os.path.join(temp_dir, "test_fbl.txt"))
     except FileNotFoundError:
         pass
-    write_work_file(0, 'INIT', 'INIT', 'INIT')
+    write_work_file(0, "INIT", "INIT", "INIT")
     for process_number in range(0, n_processes):
         processes.append(TstProcess(iterations, False))
     for p in processes:
@@ -162,8 +160,7 @@ def test_fb_locking(long_test=False):
     time.sleep(2)  # processes will not run without this (!)
 
     if long_test:
-        press_enter_to_exit = PressEnter2Exit(pre_message=f'press enter to force exit of {application_name}',
-                                              post_message=f'"{application_name}" has been forced to exit ...')
+        press_enter_to_exit = PressEnter2Exit(pre_message=f"press enter to force exit of {application_name}", post_message=f'"{application_name}" has been forced to exit ...')
     else:
         press_enter_to_exit = None  # don't use stdout when running pytest
     print()
@@ -174,9 +171,9 @@ def test_fb_locking(long_test=False):
             p.kill()
     for p in processes:
         p.join()
-    total_iterations, _ = read_work_file('FINAL', 'FINAL', 'FINAL')
+    total_iterations, _ = read_work_file("FINAL", "FINAL", "FINAL")
     print(f"iterations : got {total_iterations}, expected {n_processes * iterations}")
-    assert(total_iterations == n_processes * iterations)
+    assert total_iterations == n_processes * iterations
 
 
 if __name__ == "__main__":

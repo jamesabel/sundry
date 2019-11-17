@@ -1,4 +1,3 @@
-
 from datetime import datetime
 from dateutil import tz
 
@@ -34,7 +33,7 @@ def utc_time_string(timestamp=None):
     :param timestamp: time since epoch (as a float) or None for current time
     :return: an ISO time string
     """
-    utc_tz = tz.gettz('utc')
+    utc_tz = tz.gettz("utc")
     if timestamp is None:
         time_string = _time_string_format(datetime.utcnow(), utc_tz)
     else:

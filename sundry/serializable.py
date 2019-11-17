@@ -28,7 +28,7 @@ def convert_serializable_special_cases(o):
             # not representable with an integer so use a float
             serializable_representation = float(o)
     else:
-        raise NotImplementedError(f'can not serialize {o} since type={type(o)}')
+        raise NotImplementedError(f"can not serialize {o} since type={type(o)}")
     return serializable_representation
 
 

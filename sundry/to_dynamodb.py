@@ -1,4 +1,3 @@
-
 import io
 import decimal
 from collections import OrderedDict, defaultdict
@@ -52,7 +51,7 @@ def dict_to_dynamodb(input_value, convert_images: bool = True, raise_exception: 
         if convert_images:
             # save pillow (PIL) image as PNG binary
             image_byte_array = io.BytesIO()
-            input_value.save(image_byte_array, format='PNG')
+            input_value.save(image_byte_array, format="PNG")
             resp = image_byte_array.getvalue()
         else:
             resp = None
