@@ -9,5 +9,6 @@ pressenter2exit
 boto3
 twine
 sphinx
+ismain
 black
 hypothesis
