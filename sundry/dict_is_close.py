@@ -1,18 +1,48 @@
-import math
+from math import isinf, isnan
+
+from typeguard import typechecked
+
+rel_tol_default = 1e-09
+abs_tol_default = 0.0
 
 
-def _dict_is_close_max_value(x, y, rel_tol: float = None, abs_tol: float = None, max_difference_label=None, max_difference_value: float = None):
+@typechecked(always=True)
+def _is_close(a: float, b: float, rel_tol: float, abs_tol: float):
+
+    """
+    similar to math.isclose() except is keeps track of which values have the greatest difference
+    :param a: first input
+    :param b: second input
+    :param rel_tol: relative tolerance
+    :param abs_tol: absolute tolerance
+    :return:
+    """
+
+    # handle NaN, INF.  Matches math.isclose() .
+    if isnan(a) or isnan(b):
+        is_close_flag = False
+    elif isinf(a) and isinf(b):
+        is_close_flag = a == b  # handles both +INF and -INF
+    elif isinf(a) or isinf(b):
+        is_close_flag = False  # only one or the other is (positive or negative) infinity
+    elif isinf(rel_tol) or isinf(abs_tol):
+        is_close_flag = True
+    else:
+        is_close_flag = abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
+    return is_close_flag
+
+
+@typechecked(always=True)
+def _dict_is_close_max_value(x, y, rel_tol: (float, None) = rel_tol_default, abs_tol: (float, None) = abs_tol_default, max_difference_label=None, max_difference_value: float = None):
+
+    if rel_tol is None or isnan(rel_tol):
+        rel_tol = rel_tol_default
+    if abs_tol is None:
+        abs_tol = abs_tol_default
 
     if isinstance(x, float) and isinstance(y, float):
-        if rel_tol is None and abs_tol is None:
-            # default tolerance
-            is_close_flag = math.isclose(x, y)
-        elif rel_tol is not None and abs_tol is not None:
-            # user supplied tolerance
-            is_close_flag = math.isclose(x, y, rel_tol=rel_tol, abs_tol=abs_tol)
-        else:
-            # require both
-            raise ValueError(rel_tol, abs_tol)
+        is_close_flag = _is_close(x, y, rel_tol, abs_tol)
     elif isinstance(x, dict) and isinstance(y, dict):
         is_close_flag = False
         if set(x.keys()) == set(y.keys()):
@@ -28,6 +58,7 @@ class DictIsClose:
     Like doing x == y for a dict, except if there are floats then use math.isclose()
     """
 
+    @typechecked(always=True)
     def __init__(self, x, y, rel_tol: float = None, abs_tol: float = None):
         self._x = x
         self._y = y
@@ -41,6 +72,7 @@ class DictIsClose:
         return is_close_flag
 
 
+@typechecked(always=True)
 def dict_is_close(x, y, rel_tol: float = None, abs_tol: float = None):
     """
 

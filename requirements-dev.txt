@@ -12,3 +12,4 @@ sphinx
 ismain
 black
 hypothesis
+typeguard

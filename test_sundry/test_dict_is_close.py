@@ -32,13 +32,6 @@ def test_dict_is_close():
     y["b"] = 42  # different type
     assert not dict_is_close(x, y)
 
-    y = deepcopy(x)
-    try:
-        assert dict_is_close(x, y, 1e-4)
-        assert False  # should never get here
-    except ValueError as e:
-        pass
-
 
 if __name__ == "__main__":
     test_dict_is_close()
