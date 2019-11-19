@@ -7,7 +7,6 @@ abs_tol_default = 0.0
 
 
 class ValueDivergence:
-
     @typechecked(always=True)
     def __init__(self, label: (str, None), value):
         self.label = label
@@ -32,7 +31,6 @@ class ValueDivergence:
 
 
 class ValueDivergences:
-
     @typechecked(always=True)
     def __init__(self, max_divergences: int = 10):
         self.max_divergences = max_divergences

@@ -7,7 +7,7 @@ from sundry import ValueDivergence, ValueDivergences
 
 def test_dict_is_close_divergences():
     divergences = ValueDivergences()
-    assert(divergences.max_label() is None)
+    assert divergences.max_label() is None
     divergences.add(ValueDivergence("a", 1.0))
     assert math.isclose(divergences.max_value(), 1.0)
     divergences.add(ValueDivergence("c", 3.0))

@@ -1,5 +1,5 @@
 from copy import deepcopy
-from pprint import  pprint
+from pprint import pprint
 
 from sundry import dict_is_close, DictIsClose
 
