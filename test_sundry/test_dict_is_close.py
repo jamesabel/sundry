@@ -1,4 +1,5 @@
 from copy import deepcopy
+from pprint import  pprint
 
 from sundry import dict_is_close, DictIsClose
 
@@ -29,6 +30,7 @@ def test_dict_is_close():
     assert not dic.is_close()
     assert dic.get_max_divergence_label() == "a"
     assert dic.get_max_divergence_value() > 0.0
+    pprint(dic)
 
     y = deepcopy(x)
     y["b"] = "a different string"
