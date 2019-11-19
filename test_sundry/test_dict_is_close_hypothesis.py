@@ -4,9 +4,9 @@ from hypothesis import given
 from hypothesis.strategies import floats
 from ismain import is_main
 
-from sundry import DictIsClose, Divergences
+from sundry import DictIsClose, ValueDivergences
 
-divergences = Divergences()
+divergences = ValueDivergences()
 
 
 @given(floats(), floats(), floats(), floats())

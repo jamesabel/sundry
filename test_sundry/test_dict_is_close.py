@@ -13,6 +13,10 @@ def test_dict_is_close():
     y[3]["d"] = 2.999999999
 
     assert dict_is_close(x, y)
+    dic = DictIsClose(x, y)
+    assert dic.is_close()
+    assert len(dic.divergences) == 0
+    print(dic)
 
     # tighten up the requirement
     assert not dict_is_close(x, y, 1e-12, 0.0)
@@ -28,13 +32,16 @@ def test_dict_is_close():
     # test for the divergence label and value
     dic = DictIsClose(x, y)
     assert not dic.is_close()
-    assert dic.get_max_divergence_label() == "a"
-    assert dic.get_max_divergence_value() > 0.0
+    assert dic.divergences.max_label() == "a"
+    assert dic.divergences.max_value() > 0.0
+    assert len(dic.divergences) > 0
     pprint(dic)
 
     y = deepcopy(x)
     y["b"] = "a different string"
     assert not dict_is_close(x, y)
+    dic = DictIsClose(x, y)
+    # pprint(dic)
 
     y = deepcopy(x)
     y["b"] = 42  # different type
