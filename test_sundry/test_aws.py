@@ -5,56 +5,64 @@ from collections import OrderedDict, defaultdict
 from pprint import pprint
 import math
 import datetime
+from datetime import timedelta
+import pickle
 
 from PIL import Image
 
 import boto3
 from botocore.exceptions import ProfileNotFound
 
-from sundry import dict_to_dynamodb
+from sundry import dict_to_dynamodb, aws_scan_table, aws_scan_table_cached, dict_is_close
+
+id_str = "id"
+dict_id = "test"
+sundry_str = "sundry"
+aws_region = "us-west-2"
+
+# source:
+# https://en.wikipedia.org/wiki/Portable_Network_Graphics
+# https://en.wikipedia.org/wiki/File:PNG_transparency_demonstration_1.png
+png_image = Image.open(os.path.join("test_sundry", "280px-PNG_transparency_demonstration_1.png"))
+
+od = OrderedDict()
+od["a"] = 1
+od["b"] = 2
+
+dd = defaultdict(int)
+dd[1] = 2
+
+sample_input = {
+    id_str: dict_id,
+    "sample1": "Test Data",
+    "sample2": 2.0,
+    "sample3": True,
+    "sample4": int(1),
+    "sample5": None,
+    "sample6": {"test": True},
+    "sample7": ["Hello", "World"],
+    "sample8": [9, 10],
+    "od": od,
+    "dd": dd,
+    "DecimalInt": decimal.Decimal(42),
+    "DecimalFloat": decimal.Decimal(2.0) / decimal.Decimal(3.0),
+    "a_tuple": (1, 2, 3),
+    42: "my_key_is_an_int",
+    "difficult_floats": [math.pi, math.e, 0.6],
+    "difficult_ints": [sys.maxsize],
+    "image": png_image,
+    "test_date_time": datetime.datetime.fromtimestamp(1559679535),  # 2019-06-04T13:18:55
+    "zero_len_string": "",
+}
+
+
+def check_table_contents(contents):
+    with open(os.path.join("cache", f"{sundry_str}.pickle"), "rb") as f:
+        assert dict_is_close(sample_input, contents[0])
+        assert dict_is_close(sample_input, pickle.load(f)[0])
 
 
 def test_dict_to_dynamodb():
-
-    id_str = "id"
-    dict_id = "test"
-    sundry_str = "sundry"
-    aws_region = "us-west-2"
-
-    od = OrderedDict()
-    od["a"] = 1
-    od["b"] = 2
-
-    dd = defaultdict(int)
-    dd[1] = 2
-
-    # source:
-    # https://en.wikipedia.org/wiki/Portable_Network_Graphics
-    # https://en.wikipedia.org/wiki/File:PNG_transparency_demonstration_1.png
-    png_image = Image.open(os.path.join("test_sundry", "280px-PNG_transparency_demonstration_1.png"))
-
-    sample_input = {
-        id_str: dict_id,
-        "sample1": "Test Data",
-        "sample2": 2.0,
-        "sample3": True,
-        "sample4": int(1),
-        "sample5": None,
-        "sample6": {"test": True},
-        "sample7": ["Hello", "World"],
-        "sample8": [9, 10],
-        "od": od,
-        "dd": dd,
-        "DecimalInt": decimal.Decimal(42),
-        "DecimalFloat": decimal.Decimal(2.0) / decimal.Decimal(3.0),
-        "a_tuple": (1, 2, 3),
-        42: "my_key_is_an_int",
-        "difficult_floats": [math.pi, math.e, 0.6],
-        "difficult_ints": [sys.maxsize],
-        "image": png_image,
-        "test_date_time": datetime.datetime.fromtimestamp(1559679535),  # 2019-06-04T13:18:55
-        "zero_len_string": "",
-    }
 
     if False:
         # interestingly, these do not work
@@ -90,6 +98,15 @@ def test_dict_to_dynamodb():
         # set to False pass even if we only test to check the conversion, although running the test doesn't actually check put/get from AWS
         if True:
             raise
+
+    aws_profile = "default"  # I don't know why I need to use "default" and not "sundry"
+
+    table_contents = aws_scan_table_cached(sundry_str, aws_profile, cache_life=timedelta(seconds=1).total_seconds())
+    check_table_contents(table_contents)
+    table_contents = aws_scan_table(sundry_str, aws_profile)
+    check_table_contents(table_contents)
+    table_contents = aws_scan_table_cached(sundry_str, aws_profile, cache_life=timedelta(hours=1).total_seconds())
+    check_table_contents(table_contents)
 
 
 if __name__ == "__main__":
