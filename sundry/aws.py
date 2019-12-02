@@ -63,6 +63,7 @@ def aws_get_dynamodb_table_names(profile_name: str) -> list:
             table_names.extend(partial_table_names)
         if last_evaluated_table_name is None:
             more_to_evaluate = False
+    table_names.sort()
 
     return table_names
 
