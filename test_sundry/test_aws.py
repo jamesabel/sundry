@@ -13,7 +13,7 @@ from PIL import Image
 import boto3
 from botocore.exceptions import ProfileNotFound
 
-from sundry import dict_to_dynamodb, aws_scan_table, aws_scan_table_cached, dict_is_close
+from sundry import dict_to_dynamodb, aws_dynamodb_scan_table, aws_dynamodb_scan_table_cached, dict_is_close, aws_get_dynamodb_table_names
 
 id_str = "id"
 dict_id = "test"
@@ -62,7 +62,7 @@ def check_table_contents(contents):
         assert dict_is_close(sample_input, pickle.load(f)[0])
 
 
-def test_dict_to_dynamodb():
+def test_aws():
 
     if False:
         # interestingly, these do not work
@@ -101,13 +101,18 @@ def test_dict_to_dynamodb():
 
     aws_profile = "default"  # I don't know why I need to use "default" and not "sundry"
 
-    table_contents = aws_scan_table_cached(sundry_str, aws_profile, cache_life=timedelta(seconds=1).total_seconds())
+    table_contents = aws_dynamodb_scan_table_cached(sundry_str, aws_profile, cache_life=timedelta(seconds=1).total_seconds())
     check_table_contents(table_contents)
-    table_contents = aws_scan_table(sundry_str, aws_profile)
+    table_contents = aws_dynamodb_scan_table(sundry_str, aws_profile)
     check_table_contents(table_contents)
-    table_contents = aws_scan_table_cached(sundry_str, aws_profile, cache_life=timedelta(hours=1).total_seconds())
+    table_contents = aws_dynamodb_scan_table_cached(sundry_str, aws_profile, cache_life=timedelta(hours=1).total_seconds())
     check_table_contents(table_contents)
+
+    dynamodb_tables = aws_get_dynamodb_table_names(aws_profile)
+    print(dynamodb_tables)
+    assert(len(dynamodb_tables) > 0)
+    assert('sundry' in dynamodb_tables)
 
 
 if __name__ == "__main__":
-    test_dict_to_dynamodb()
+    test_aws()

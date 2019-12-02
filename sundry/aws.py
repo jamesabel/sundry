@@ -29,7 +29,45 @@ def aws_get_client(resource_name: str, profile_name: str):
     return session.client(resource_name)
 
 
+# todo: remove this after a while
 def aws_scan_table(table_name: str, profile_name: str) -> (list, None):
+    log.warning("aws_scan_table deprecated - use aws_dynamodb_scan_table")
+    return aws_dynamodb_scan_table(table_name, profile_name)
+
+
+# todo: remove this after a while
+def aws_scan_table_cached(table_name: str, profile_name: str, cache_dir: str = "cache", invalidate_cache: bool = False, cache_life: (float, None) = None) -> list:
+    log.warning("aws_scan_table_cached deprecated - use aws_dynamodb_scan_table_cached")
+    return aws_dynamodb_scan_table_cached(table_name, profile_name, cache_dir, invalidate_cache, cache_life)
+
+
+def aws_get_dynamodb_table_names(profile_name: str) -> list:
+    """
+    get all DynamoDB tables
+    :param profile_name:  AWS IAM profile name
+    :return: a list of DynamoDB table names
+    """
+    dynamodb_client = aws_get_client("dynamodb", profile_name)
+
+    table_names = []
+    more_to_evaluate = True
+    last_evaluated_table_name = None
+    while more_to_evaluate:
+        if last_evaluated_table_name is None:
+            response = dynamodb_client.list_tables()
+        else:
+            response = dynamodb_client.list_tables(ExclusiveStartTableName=last_evaluated_table_name)
+        partial_table_names = response.get("TableNames")
+        last_evaluated_table_name = response.get("LastEvaluatedTableName")
+        if partial_table_names is not None and len(partial_table_names) > 0:
+            table_names.extend(partial_table_names)
+        if last_evaluated_table_name is None:
+            more_to_evaluate = False
+
+    return table_names
+
+
+def aws_dynamodb_scan_table(table_name: str, profile_name: str) -> (list, None):
     """
     returns entire lookup table
     :param table_name: DynamoDB table name
@@ -75,7 +113,7 @@ def _is_valid_db_pickled_file(file_path: str, cache_life: (float, int, None)):
     return is_valid
 
 
-def aws_scan_table_cached(table_name: str, profile_name: str, cache_dir: str = "cache", invalidate_cache: bool = False, cache_life: (float, None) = None) -> list:
+def aws_dynamodb_scan_table_cached(table_name: str, profile_name: str, cache_dir: str = "cache", invalidate_cache: bool = False, cache_life: (float, None) = None) -> list:
     """
 
     Read data table(s) from AWS with caching.  This *requires* that the table not change during execution nor
@@ -108,7 +146,7 @@ def aws_scan_table_cached(table_name: str, profile_name: str, cache_dir: str = "
         log.info(f"getting {table_name} from DB")
 
         try:
-            table_data = aws_scan_table(table_name, profile_name)
+            table_data = aws_dynamodb_scan_table(table_name, profile_name)
         except RetriesExceededError:
             table_data = None
 
