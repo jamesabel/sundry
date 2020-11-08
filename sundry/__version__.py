@@ -1,4 +1,5 @@
 __title__ = "sundry"
+__application_name__ = __title__
 __description__ = "miscellaneous code"
 __url__ = "https://github.com/jamesabel/sundry"
 __download_url__ = "https://github.com/jamesabel/sundry/archive/master.zip"
