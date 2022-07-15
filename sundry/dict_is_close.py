@@ -1,9 +1,14 @@
 from math import isinf, isnan, nan, inf
+from logging import getLogger
 
 from typeguard import typechecked
 
+from sundry import __application_name__
+
 rel_tol_default = 1e-09
 abs_tol_default = 0.0
+
+log = getLogger(__application_name__)
 
 
 class ValueDivergence:
@@ -153,6 +158,9 @@ class DictIsClose:
 
                     is_close_flag = self._dict_is_close(x[k], y[k], rel_tol, abs_tol, label)
                     is_close_flags.append(is_close_flag)
+            else:
+                log.error(f"{set(x.keys())} != {set(y.keys())}")
+                is_close_flags.append(False)
             is_close_flag = all(is_close_flags)
         else:
             is_close_flag = x == y  # everything else that can be evaluated with == such as strings
