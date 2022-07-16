@@ -189,7 +189,7 @@ def aws_s3_download_cached(s3_bucket: str, s3_key: str, dest_dir: (Path, None), 
     else:
 
         if dest_dir is not None and dest_path is None:
-            if "/" is s3_key or "\\" in s3_key:
+            if "/" == s3_key or "\\" in s3_key:
                 log.error(f"slash (/ or \\) in s3_key '{s3_key}' - can not download {s3_bucket}:{s3_key}")
             else:
                 dest_path = Path(dest_dir, s3_key)
