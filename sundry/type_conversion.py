@@ -1,5 +1,19 @@
 from decimal import Decimal
-import distutils.util
+
+_true_strings = ("y", "yes", "t", "true", "on", "1")
+_false_strings = ("n", "no", "f", "false", "off", "0")
+
+
+def _strtobool(value: str) -> bool:
+    """
+    Same semantics as the former distutils.util.strtobool (distutils was removed in Python 3.12).
+    """
+    lowered = value.lower()
+    if lowered in _true_strings:
+        return True
+    if lowered in _false_strings:
+        return False
+    raise ValueError(f"invalid truth value {value!r}")
 
 
 def to_bool(value):
@@ -22,8 +36,7 @@ def to_bool(value):
         if value.lower() == "none" or value.lower() == "null":
             new_bool = None
         else:
-            # strtobool actually returns an int
-            new_bool = bool(distutils.util.strtobool(value))
+            new_bool = _strtobool(value)
     else:
         raise ValueError(value)
 

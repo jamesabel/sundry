@@ -1,3 +1,3 @@
-call venv\Scripts\activate.bat
-python -m black -l 192 sundry test_sundry setup.py
+call venv\Scriptsctivate.bat
+python -m black sundry test_sundry
 deactivate

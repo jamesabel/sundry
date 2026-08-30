@@ -1,4 +1,5 @@
 from math import isinf, isnan, nan, inf
+from typing import Optional, Union
 from logging import getLogger
 
 from typeguard import typechecked
@@ -12,8 +13,8 @@ log = getLogger(__application_name__)
 
 
 class ValueDivergence:
-    @typechecked(always=True)
-    def __init__(self, label: (str, None), value):
+    @typechecked
+    def __init__(self, label: Optional[str], value):
         self.label = label
         self.value = value
 
@@ -36,7 +37,7 @@ class ValueDivergence:
 
 
 class ValueDivergences:
-    @typechecked(always=True)
+    @typechecked
     def __init__(self, max_divergences: int = 10):
         self.max_divergences = max_divergences
         self.divergences = []
@@ -48,7 +49,7 @@ class ValueDivergences:
     def __len__(self):
         return len(self.divergences)
 
-    @typechecked(always=True)
+    @typechecked
     def add(self, divergence: ValueDivergence):
 
         if not any([d == divergence for d in self.divergences]):
@@ -85,8 +86,8 @@ class DictIsClose:
     Like doing x == y for a dict, except if there are floats then use math.isclose()
     """
 
-    @typechecked(always=True)
-    def __init__(self, x, y, rel_tol: float = None, abs_tol: float = None, divergences: ValueDivergences = ValueDivergences()):
+    @typechecked
+    def __init__(self, x, y, rel_tol: Optional[float] = None, abs_tol: Optional[float] = None, divergences: ValueDivergences = ValueDivergences()):
         self._x = x
         self._y = y
         self._rel_tol = rel_tol
@@ -97,9 +98,8 @@ class DictIsClose:
     def __repr__(self):
         return self.divergences.__repr__()
 
-    @typechecked(always=True)
-    def _is_close_number(self, a: (float, int), b: (float, int), rel_tol: float, abs_tol: float, value_label: (str, None)):
-
+    @typechecked
+    def _is_close_number(self, a: Union[float, int], b: Union[float, int], rel_tol: float, abs_tol: float, value_label: Optional[str]):
         """
         similar to math.isclose() except is keeps track of which values have the greatest difference
         :param a: first input
@@ -134,8 +134,8 @@ class DictIsClose:
 
         return is_close_flag
 
-    @typechecked(always=True)
-    def _dict_is_close(self, x, y, rel_tol: (float, None), abs_tol: (float, None), parent_label: (str, None)):
+    @typechecked
+    def _dict_is_close(self, x, y, rel_tol: Optional[float], abs_tol: Optional[float], parent_label: Optional[str]):
 
         if rel_tol is None or isnan(rel_tol):
             rel_tol = rel_tol_default
@@ -173,8 +173,8 @@ class DictIsClose:
         return self._is_close_flag
 
 
-@typechecked(always=True)
-def dict_is_close(x, y, rel_tol: float = None, abs_tol: float = None):
+@typechecked
+def dict_is_close(x, y, rel_tol: Optional[float] = None, abs_tol: Optional[float] = None):
     """
 
     Like doing x == y for a dict, except if there are floats then use math.isclose()

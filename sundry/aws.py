@@ -3,6 +3,7 @@ import logging
 import os
 import pickle
 from pathlib import Path
+from typing import Optional, Union
 from dataclasses import dataclass
 from math import isclose
 import shutil
@@ -102,14 +103,14 @@ def aws_dynamodb_scan_table(table_name: str, profile_name: str) -> (list, None):
     return items
 
 
-def _is_valid_db_pickled_file(file_path: str, cache_life: (float, int, None)):
+def _is_valid_db_pickled_file(file_path: str, cache_life: Union[float, int, None]):
     is_valid = os.path.exists(file_path) and os.path.getsize(file_path) > 0
     if is_valid and cache_life is not None:
         is_valid = time.time() <= os.path.getmtime(file_path) + cache_life
     return is_valid
 
 
-def aws_dynamodb_scan_table_cached(table_name: str, profile_name: str, cache_dir: str = "cache", invalidate_cache: bool = False, cache_life: (float, None) = None) -> list:
+def aws_dynamodb_scan_table_cached(table_name: str, profile_name: str, cache_dir: str = "cache", invalidate_cache: bool = False, cache_life: Optional[float] = None) -> list:
     """
 
     Read data table(s) from AWS with caching.  This *requires* that the table not change during execution nor
@@ -169,7 +170,9 @@ class AWSS3DownloadStatus:
 cache_abs_tol = 3.0  # seconds
 
 
-def aws_s3_download_cached(s3_bucket: str, s3_key: str, dest_dir: (Path, None), dest_path: (Path, None), cache_dir: (Path, None), retries: int = 10, profile_name: str = None) -> AWSS3DownloadStatus:
+def aws_s3_download_cached(
+    s3_bucket: str, s3_key: str, dest_dir: Optional[Path], dest_path: Optional[Path], cache_dir: Optional[Path], retries: int = 10, profile_name: Optional[str] = None
+) -> AWSS3DownloadStatus:
     """
     download from AWS S3 with caching
     :param s3_bucket: S3 bucket of source
@@ -270,7 +273,7 @@ def aws_s3_delete(s3_bucket_name: str, s3_key: str, profile_name: str):
     s3.Object(s3_bucket_name, s3_key).delete()
 
 
-def aws_s3_upload(file_path: (str, Path), s3_bucket: str, s3_key: str, profile_name: str, force=False):
+def aws_s3_upload(file_path: Union[str, Path], s3_bucket: str, s3_key: str, profile_name: str, force=False):
     # todo: test if file already has been uploaded (using a hash)
     log.info(f"S3 upload : file_path={file_path} : bucket={s3_bucket} : key={s3_key}")
 
@@ -306,7 +309,7 @@ def aws_s3_upload(file_path: (str, Path), s3_bucket: str, s3_key: str, profile_n
     return uploaded_flag
 
 
-def aws_s3_download(file_path: (str, Path), s3_bucket: str, s3_key: str, profile_name: str) -> bool:
+def aws_s3_download(file_path: Union[str, Path], s3_bucket: str, s3_key: str, profile_name: str) -> bool:
 
     if isinstance(file_path, str):
         log.info(f"{file_path} is not Path object.  Non-Path objects will be deprecated in the future")
