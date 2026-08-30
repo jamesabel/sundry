@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sundry"
+dynamic = ["version"]
+description = "miscellaneous code"
+readme = "README.md"
+# Minimum is set by the dependencies (boto3 and typeguard 4.4+ require 3.9), not by this code.
+requires-python = ">=3.9"
+authors = [{ name = "James Abel", email = "j@abel.co" }]
+license = { text = "MIT" }
+keywords = ["utility"]
+classifiers = [
+    "Development Status :: 6 - Mature",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "python-dateutil",
+    "pillow",
+    "ismain",
+    "typeguard",
+    "boto3",
+    "appdirs",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "coverage",
+    "hypothesis",
+    "black",
+    "flake8",
+    "build",
+    "twine",
+    "sphinx",
+]
+
+[project.urls]
+Homepage = "https://github.com/jamesabel/sundry"
+Repository = "https://github.com/jamesabel/sundry"
+Issues = "https://github.com/jamesabel/sundry/issues"
+
+[tool.setuptools.dynamic]
+version = { attr = "sundry.__version__.__version__" }
+
+[tool.setuptools.packages.find]
+include = ["sundry*"]
+
+[tool.black]
+line-length = 192
+target-version = ["py39"]
+
+[tool.pytest.ini_options]
+testpaths = ["test_sundry"]

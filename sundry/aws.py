@@ -170,7 +170,9 @@ class AWSS3DownloadStatus:
 cache_abs_tol = 3.0  # seconds
 
 
-def aws_s3_download_cached(s3_bucket: str, s3_key: str, dest_dir: Optional[Path], dest_path: Optional[Path], cache_dir: Optional[Path], retries: int = 10, profile_name: Optional[str] = None) -> AWSS3DownloadStatus:
+def aws_s3_download_cached(
+    s3_bucket: str, s3_key: str, dest_dir: Optional[Path], dest_path: Optional[Path], cache_dir: Optional[Path], retries: int = 10, profile_name: Optional[str] = None
+) -> AWSS3DownloadStatus:
     """
     download from AWS S3 with caching
     :param s3_bucket: S3 bucket of source

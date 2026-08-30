@@ -1,0 +1,36 @@
+# Publishes to PyPI when a GitHub release is published.
+#
+# Uses PyPI "trusted publishing" (OIDC) - no API token secret is needed, but a one-time setup is required on PyPI:
+#   https://pypi.org/manage/project/sundry/settings/publishing/
+#   Owner: jamesabel   Repository: sundry   Workflow: publish.yml   Environment: pypi
+#
+# Release procedure:
+#   1. bump __version__ in sundry/__version__.py (via a PR)
+#   2. create a GitHub release whose tag matches, e.g. v0.24.0
+#   3. this workflow builds and uploads the sdist and wheel
+
+name: Publish to PyPI
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+      - name: Build sdist and wheel
+        run: |
+          python -m pip install --upgrade pip build twine
+          python -m build
+          python -m twine check dist/*
+      - name: Publish
+        uses: pypa/gh-action-pypi-publish@release/v1

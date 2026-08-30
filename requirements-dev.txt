@@ -1,15 +1,1 @@
-pillow
-python-dateutil
-wheel
-pytest
-coverage
-pytest-cov
-balsa
-pressenter2exit
-boto3
-twine
-sphinx
-ismain
-black
-hypothesis
-typeguard
+-e .[dev]

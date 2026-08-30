@@ -1,10 +1,10 @@
-del /Q sundry.egg-info\*.*
-del /Q build\*.*
-del /Q dist\*.*
-copy /Y LICENSE LICENSE.txt
-copy /Y docs\source\readme.rst readme.rst
-copy /Y docs\source\readme.rst sundry\readme.rst
+REM Manual release to PyPI. The preferred path is the "Publish to PyPI" GitHub workflow (create a GitHub release);
+REM this script is the fallback for publishing from a local checkout.
+if exist build rmdir /S /Q build
+if exist dist rmdir /S /Q dist
+if exist sundry.egg-info rmdir /S /Q sundry.egg-info
 call venv\Scripts\activate.bat
-python.exe setup.py bdist_wheel
-twine upload dist/*
+python -m build
+python -m twine check dist/*
+python -m twine upload dist/*
 deactivate

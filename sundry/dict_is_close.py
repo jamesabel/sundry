@@ -100,7 +100,6 @@ class DictIsClose:
 
     @typechecked
     def _is_close_number(self, a: Union[float, int], b: Union[float, int], rel_tol: float, abs_tol: float, value_label: Optional[str]):
-
         """
         similar to math.isclose() except is keeps track of which values have the greatest difference
         :param a: first input
