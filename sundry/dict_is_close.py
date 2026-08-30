@@ -1,5 +1,5 @@
 from math import isinf, isnan, nan, inf
-from typing import Optional
+from typing import Optional, Union
 from logging import getLogger
 
 from typeguard import typechecked
@@ -14,7 +14,7 @@ log = getLogger(__application_name__)
 
 class ValueDivergence:
     @typechecked
-    def __init__(self, label: (str, None), value):
+    def __init__(self, label: Optional[str], value):
         self.label = label
         self.value = value
 
@@ -99,7 +99,7 @@ class DictIsClose:
         return self.divergences.__repr__()
 
     @typechecked
-    def _is_close_number(self, a: (float, int), b: (float, int), rel_tol: float, abs_tol: float, value_label: (str, None)):
+    def _is_close_number(self, a: Union[float, int], b: Union[float, int], rel_tol: float, abs_tol: float, value_label: Optional[str]):
 
         """
         similar to math.isclose() except is keeps track of which values have the greatest difference
@@ -136,7 +136,7 @@ class DictIsClose:
         return is_close_flag
 
     @typechecked
-    def _dict_is_close(self, x, y, rel_tol: (float, None), abs_tol: (float, None), parent_label: (str, None)):
+    def _dict_is_close(self, x, y, rel_tol: Optional[float], abs_tol: Optional[float], parent_label: Optional[str]):
 
         if rel_tol is None or isnan(rel_tol):
             rel_tol = rel_tol_default
